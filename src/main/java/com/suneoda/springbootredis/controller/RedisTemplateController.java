@@ -3,6 +3,7 @@ package com.suneoda.springbootredis.controller;
 import com.suneoda.springbootredis.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -141,5 +142,25 @@ public class RedisTemplateController {
         });
     }
 
-    
+    /**
+     * @Author shiguorang
+     * @Description //绑定操作
+     * @Date 20:12:08 2021-04-21
+     * @Param
+     * @return
+     **/
+    @GetMapping("/bound")
+    public void bound(){
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        BoundValueOperations boundValueOperations = redisTemplate.boundValueOps("name");
+        User user = new User();
+        user.setName("shiguorang");
+        user.setAge(24);
+        user.setSex("男");
+        boundValueOperations.set(user);
+
+        User get = (User) boundValueOperations.get();
+        log.info("获取到的值"+get);
+    }
+
 }
